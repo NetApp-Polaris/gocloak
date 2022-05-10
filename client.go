@@ -269,19 +269,8 @@ func (client *gocloak) GetServerInfo(ctx context.Context, accessToken string) (*
 }
 
 // CheckLdapConnection is used to test ldap connection
-func (client *gocloak) CheckLdapConnection(ctx context.Context, accessToken, realm, action, connectionUrl, authType, bindDn, bindCredential, useTruststoreSpi, connectionTimeout, startTls string) error {
+func (client *gocloak) CheckLdapConnection(ctx context.Context, accessToken, realm string, reqBody TestLdapConn) error {
 	const errMessage = "could not test ldap connection"
-
-	reqBody := TestLdapConn{
-		Action:            &action,
-		ConnectionUrl:     &connectionUrl,
-		AuthType:          &authType,
-		BindDn:            &bindDn,
-		BindCredential:    &bindCredential,
-		UseTruststoreSpi:  &useTruststoreSpi,
-		ConnectionTimeout: &connectionTimeout,
-		StartTls:          &startTls,
-	}
 
 	resp, err := client.getRequestWithBearerAuth(ctx, accessToken).
 		SetBody(reqBody).
