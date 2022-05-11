@@ -516,4 +516,17 @@ type GoCloak interface {
 
 	// UpdateRequiredAction updates a required action for a given realm
 	UpdateRequiredAction(ctx context.Context, token string, realm string, requiredAction RequiredActionProviderRepresentation) error
+
+	// ---------------
+	// LDAP cleanup API
+	// ---------------
+
+	// DisconnectLDAP deletes the user federation, user and groups
+	DisconnectLDAP(ctx context.Context, accessToken, realm string) error
+	// DeleteAllUser deletes the all user
+	DeleteAllUser(ctx context.Context, accessToken, realm string) error
+	// DeleteAllGroup deletes the group
+	DeleteAllGroup(ctx context.Context, accessToken, realm string) error
+	// DeleteUserFederation deletes the user federation
+	DeleteUserFederation(ctx context.Context, accessToken, realm string) error
 }

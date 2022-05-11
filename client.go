@@ -3777,3 +3777,131 @@ func (client *gocloak) UpdateRequiredAction(ctx context.Context, token string, r
 
 	return err
 }
+
+// DeleteAllUser delete all user
+func (client *gocloak) DeleteAllUser(ctx context.Context, token, realm string) error {
+	const errMessage = "could not get user list"
+	var userList []*User
+	var err error
+	maxLimit := 1000
+
+	userList, err = client.GetUsers(ctx, token, realm, GetUsersParams{Max: &maxLimit})
+
+	if err != nil {
+		return &APIError{
+			Code:    0,
+			Message: errors.Wrap(err, errMessage).Error(),
+			Type:    ParseAPIErrType(err),
+		}
+	}
+
+	const errMessageDelete = "could not delete user"
+	for _, user := range userList {
+		if PString(user.Username) != "admin" {
+			err = client.DeleteUser(ctx, token, realm, PString(user.ID))
+			if err != nil {
+				return &APIError{
+					Code:    0,
+					Message: errors.Wrap(err, errMessageDelete).Error(),
+					Type:    ParseAPIErrType(err),
+				}
+			}
+		}
+	}
+	return nil
+}
+
+// DeleteAllGroup delete all groups
+func (client *gocloak) DeleteAllGroup(ctx context.Context, token, realm string) error {
+	const errMessage = "could not get group"
+	var groupList []*Group
+	var err error
+
+	groupList, err = client.GetGroups(ctx, token, realm, GetGroupsParams{})
+
+	if err != nil {
+		return &APIError{
+			Code:    0,
+			Message: errors.Wrap(err, errMessage).Error(),
+			Type:    ParseAPIErrType(err),
+		}
+	}
+
+	const errMessageDelete = "could not delete group"
+	for _, group := range groupList {
+		err = client.DeleteGroup(ctx, token, realm, PString(group.ID))
+		if err != nil {
+			return &APIError{
+				Code:    0,
+				Message: errors.Wrap(err, errMessageDelete).Error(),
+				Type:    ParseAPIErrType(err),
+			}
+		}
+	}
+	return nil
+}
+
+// DeleteUserFederation delete user federation
+func (client *gocloak) DeleteUserFederation(ctx context.Context, token, realm string) error {
+	const errMessage = "could not get component"
+	var componentList []*Component
+	var err error
+	componentList, err = client.GetComponents(ctx, token, realm)
+
+	if err != nil {
+		return &APIError{
+			Code:    0,
+			Message: errors.Wrap(err, errMessage).Error(),
+			Type:    ParseAPIErrType(err),
+		}
+	}
+
+	const errMessageDelete = "could not delete component"
+	for _, component := range componentList {
+		if PString(component.ProviderID) == "ldap" {
+			err = client.DeleteComponent(ctx, token, realm, PString(component.ID))
+			if err != nil {
+				return &APIError{
+					Code:    0,
+					Message: errors.Wrap(err, errMessageDelete).Error(),
+					Type:    ParseAPIErrType(err),
+				}
+			}
+		}
+	}
+	return nil
+}
+
+// DisconnectLDAP delete the user federation, user and groups
+func (client *gocloak) DisconnectLDAP(ctx context.Context, token, realm string) error {
+	const errMessage = "could not disconnect LDAP"
+	var err error
+
+	err = client.DeleteAllUser(ctx, token, realm)
+	if err != nil {
+		return &APIError{
+			Code:    0,
+			Message: errors.Wrap(err, errMessage).Error(),
+			Type:    ParseAPIErrType(err),
+		}
+	}
+
+	err = client.DeleteAllGroup(ctx, token, realm)
+	if err != nil {
+		return &APIError{
+			Code:    0,
+			Message: errors.Wrap(err, errMessage).Error(),
+			Type:    ParseAPIErrType(err),
+		}
+	}
+
+	err = client.DeleteUserFederation(ctx, token, realm)
+	if err != nil {
+		return &APIError{
+			Code:    0,
+			Message: errors.Wrap(err, errMessage).Error(),
+			Type:    ParseAPIErrType(err),
+		}
+	}
+	return nil
+}
