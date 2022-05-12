@@ -6507,3 +6507,51 @@ func TestGocloak_UpdateRequiredAction(t *testing.T) {
 	err := client.UpdateRequiredAction(context.Background(), token.AccessToken, cfg.GoCloak.Realm, requiredAction)
 	require.NoError(t, err, "Failed to update required action")
 }
+
+func TestGocloak_DeleteAllUser(t *testing.T) {
+	cfg := GetConfig(t)
+	client := NewClientWithDebug(t)
+	token := GetAdminToken(t, client)
+	// create two user
+	CreateUser(t, client)
+	CreateUser(t, client)
+
+	err := client.DeleteAllUser(context.Background(), token.AccessToken, cfg.GoCloak.Realm)
+	require.NoError(t, err, "DeleteAllUser failed")
+}
+
+func TestGocloa_DeleteAllGroup(t *testing.T) {
+	cfg := GetConfig(t)
+	client := NewClientWithDebug(t)
+	token := GetAdminToken(t, client)
+	// create two group
+	CreateGroup(t, client)
+	CreateGroup(t, client)
+
+	err := client.DeleteAllGroup(context.Background(), token.AccessToken, cfg.GoCloak.Realm)
+	require.NoError(t, err, "DeleteAllGroup failed")
+}
+
+func TestGocloak_DisconnectLDAP(t *testing.T) {
+	cfg := GetConfig(t)
+	client := NewClientWithDebug(t)
+	token := GetAdminToken(t, client)
+	// create two user
+	CreateUser(t, client)
+	CreateUser(t, client)
+	// create two group
+	CreateGroup(t, client)
+	CreateGroup(t, client)
+
+	err := client.DisconnectLDAP(context.Background(), token.AccessToken, cfg.GoCloak.Realm)
+	require.NoError(t, err, "DisconnectLDAP failed")
+}
+
+func TestGocloak_DeleteUserFederation(t *testing.T) {
+	cfg := GetConfig(t)
+	client := NewClientWithDebug(t)
+	token := GetAdminToken(t, client)
+
+	err := client.DeleteUserFederation(context.Background(), token.AccessToken, cfg.GoCloak.Realm)
+	require.NoError(t, err, "DeleteUserFederation failed")
+}
