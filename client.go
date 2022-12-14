@@ -1594,7 +1594,7 @@ func (client *gocloak) GetGroupsCount(ctx context.Context, token, realm string, 
 		Get(client.getAdminRealmURL(realm, "groups", "count"))
 
 	if err := checkForError(resp, err, errMessage); err != nil {
-		return -1, errors.Wrap(err, errMessage)
+		return -1, err
 	}
 
 	return result.Count, nil
