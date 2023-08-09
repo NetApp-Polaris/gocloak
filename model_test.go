@@ -5,7 +5,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/netapp-polaris/gocloak/v11"
+	"github.com/netapp-polaris/gocloak/v13"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -167,7 +167,7 @@ func TestParseAPIErrType(t *testing.T) {
 }
 
 func TestStringer(t *testing.T) {
-	//nested structs
+	// nested structs
 	actions := []string{"someAction", "anotherAction"}
 	access := gocloak.AccessRepresentation{
 		Manage:      gocloak.BoolP(true),
@@ -247,7 +247,6 @@ func TestStringer(t *testing.T) {
 	"displayName": "someRealm"
 }`
 	assert.Equal(t, expectedStr, str)
-
 }
 
 type Stringable interface {
@@ -255,7 +254,6 @@ type Stringable interface {
 }
 
 func TestStringerOmitEmpty(t *testing.T) {
-
 	customs := []Stringable{
 		&gocloak.CertResponseKey{},
 		&gocloak.CertResponse{},
@@ -263,7 +261,7 @@ func TestStringerOmitEmpty(t *testing.T) {
 		&gocloak.ResourcePermission{},
 		&gocloak.PermissionResource{},
 		&gocloak.PermissionScope{},
-		&gocloak.RetrospecTokenResult{},
+		&gocloak.IntroSpectTokenResult{},
 		&gocloak.User{},
 		&gocloak.SetPasswordRequest{},
 		&gocloak.Component{},
@@ -311,7 +309,7 @@ func TestStringerOmitEmpty(t *testing.T) {
 		&gocloak.UserSessionRepresentation{},
 		&gocloak.SystemInfoRepresentation{},
 		&gocloak.MemoryInfoRepresentation{},
-		&gocloak.ServerInfoRepesentation{},
+		&gocloak.ServerInfoRepresentation{},
 		&gocloak.FederatedIdentityRepresentation{},
 		&gocloak.IdentityProviderRepresentation{},
 		&gocloak.GetResourceParams{},
@@ -333,15 +331,15 @@ func TestStringerOmitEmpty(t *testing.T) {
 		&gocloak.GetResourcePoliciesParams{},
 		&gocloak.CredentialRepresentation{},
 		&gocloak.GetUsersParams{},
+		&gocloak.GetComponentsParams{},
 		&gocloak.GetClientsParams{},
 		&gocloak.RequestingPartyTokenOptions{},
 		&gocloak.RequestingPartyPermission{},
+		&gocloak.GetClientUserSessionsParams{},
 		&gocloak.CreateUserFederationRequest{},
 	}
 
 	for _, custom := range customs {
-
 		assert.Equal(t, "{}", custom.(Stringable).String())
 	}
-
 }

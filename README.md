@@ -32,13 +32,13 @@ For release notes please consult the specific releases [here](https://github.com
 ### Installation
 
 ```shell
-go get github.com/Nerzal/gocloak/v11
+go get github.com/Nerzal/gocloak/v13
 ```
 
 ### Importing
 
 ```go
- import "github.com/Nerzal/gocloak/v11"
+ import "github.com/Nerzal/gocloak/v13"
 ```
 
 ### Create New User
@@ -80,7 +80,7 @@ go get github.com/Nerzal/gocloak/v11
   panic("Inspection failed:"+ err.Error())
  }
 
- if !rptResult.Active {
+ if !*rptResult.Active {
   panic("Token is not active")
  }
 
@@ -280,8 +280,8 @@ type GoCloak interface {
  ClearUserCache(ctx context.Context, token, realm string) error
  ClearKeysCache(ctx context.Context, token, realm string) error
 
- GetClientUserSessions(ctx context.Context, token, realm, idOfClient string) ([]*UserSessionRepresentation, error)
- GetClientOfflineSessions(ctx context.Context, token, realm, idOfClient string) ([]*UserSessionRepresentation, error)
+GetClientUserSessions(ctx context.Context, token, realm, idOfClient string, params ...GetClientUserSessionsParams) ([]*UserSessionRepresentation, error)
+GetClientOfflineSessions(ctx context.Context, token, realm, idOfClient string, params ...GetClientUserSessionsParams) ([]*UserSessionRepresentation, error)
  GetUserSessions(ctx context.Context, token, realm, userID string) ([]*UserSessionRepresentation, error)
  GetUserOfflineSessionsForClient(ctx context.Context, token, realm, userID, idOfClient string) ([]*UserSessionRepresentation, error)
 
@@ -342,7 +342,14 @@ type GoCloak interface {
  MoveCredentialBehind(ctx context.Context, token, realm, userID, credentialID, newPreviousCredentialID string) error
  MoveCredentialToFirst(ctx context.Context, token, realm, userID, credentialID string) error
 
- // *** Identity Providers ***
+// *** Authentication Flows ***
+GetAuthenticationFlows(ctx context.Context, token, realm string) ([]*AuthenticationFlowRepresentation, error)
+GetAuthenticationFlow(ctx context.Context, token, realm string, authenticationFlowID string) (*AuthenticationFlowRepresentation, error)
+CreateAuthenticationFlow(ctx context.Context, token, realm string, flow AuthenticationFlowRepresentation) error
+UpdateAuthenticationFlow(ctx context.Context, token, realm string, flow AuthenticationFlowRepresentation, authenticationFlowID string) (*AuthenticationFlowRepresentation, error)
+DeleteAuthenticationFlow(ctx context.Context, token, realm, flowID string) error
+
+// *** Identity Providers ***
 
  CreateIdentityProvider(ctx context.Context, token, realm string, providerRep IdentityProviderRepresentation) (string, error)
  GetIdentityProvider(ctx context.Context, token, realm, alias string) (*IdentityProviderRepresentation, error)
@@ -467,6 +474,18 @@ yields
 ```
 
 Note that empty parameters are not included, because of the use of ```omitempty``` in the type definitions.
+
+## Examples
+
+* [Add client role to user](./examples/ADD_CLIENT_ROLE_TO_USER.md)
+
+* [Create User Federation & Sync](./examples/USER_FEDERATION.md)
+
+* [Create User Federation & Sync with group ldap mapper](./examples/USER_FEDERATION_GROUP_LDAP_MAPPER.md)
+
+* [Create User Federation & Sync with role ldap mapper](./examples/USER_FEDERATION_ROLE_LDAP_MAPPER.md)
+
+* [Create User Federation & Sync with user attribute ldap mapper](./examples/USER_FEDERATION_USER_ATTRIBUTE_LDAP_MAPPER.md)
 
 ## License
 
